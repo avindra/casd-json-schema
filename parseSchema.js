@@ -6,14 +6,19 @@ const puppeteer = require('puppeteer-core');
 const isRequest = category => category === 'request';
 
 
-const mapQuery = (nodes, mapperFn) => {
-	const arr = new Array(nodes.length);
-	nodes.forEach((element, index) => {
-		arr[index] = mapperFn(element);
-	});
-	return arr;
-}
+/**
+ * Convert UI-friendly names from the
+ * <table> into a terser representation
+ * for our schema object
+ */
+const tableHeaderToCode = {
+'DB Field': 'table',
+'Data Type': 'type',
+'SREL References': 'link',
+'Flags': 'flags',
+};
 
+const nillables = ['link', 'flags'];
 
 const getSections = () => {
 	const elements = document.querySelectorAll('.myToc0 li a');
@@ -42,20 +47,72 @@ const getCells = () => {
 	});
 }
 
+
+/**
+ * parses pure cell representation into structured form:
+ *
+ *
+ * E.g.,
+ *
+ *     last_mod_by: {
+ *     'DB Field': 'last_mod_by',
+ *     'Data Type': 'SREL',
+ *     'SREL References': 'cnt.id',
+ *     Flags: ' '
+ *   }
+ * }
+ * ]
+ *
+ *
+ */
+const tableDataToObject = (tableData) => {
+	const [headerInfo, ...attributeLines] = tableData;
+	const [_, ...headers] = headerInfo.split('\t');
+	return attributeLines.reduce((acc, line) => {
+		const cells = line.split('\t');
+		const [attributeName, ...values] = cells;
+		const info = {};
+		headers.forEach((hdr, idx) => {
+			const key = tableHeaderToCode[hdr];
+			const value = values[idx];
+
+			if (nillables.includes(key) && value === ' ') {
+				// exclude representations for empty values
+			} else {
+				info[key] = value;
+			}
+
+		});
+		acc[attributeName]  = info;
+		return acc;
+	}, {});
+
+}
+
 (async () => {
   const browser = await puppeteer.launch({executablePath: '/usr/bin/google-chrome'});
   const page = await browser.newPage();
 
+  let schema = {};
   for (const category of categories) {
-		 const file = isRequest(category) ? 'request' : `${category}-objects`;
-		await page.goto(`${doc_base}/${file}.html`);
+	 const file = isRequest(category) ? 'request' : `${category}-objects`;
+	await page.goto(`${doc_base}/${file}.html`);
 
 	const sections = await page.evaluate(getSections);
-	const cells = await page.evaluate(getCells);
 
-	console.log('cells', cells);
+	const tableData = await page.evaluate(getCells);
+
+	const parsedTables = tableData.map(tableDataToObject);
+
+	sections.forEach((section, index) => {
+		parsedTables.forEach((table, offset) => {
+			const s = sections[index + offset];
+			schema[s] = table;
+		})
+	});
 }
 
+  console.log(JSON.stringify(schema, null, 2));
 
   await browser.close();
 })();
