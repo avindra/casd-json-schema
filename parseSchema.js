@@ -26,7 +26,7 @@ const tableHeaderToCode = {
 
 const nillables = [RELATION, 'flags'];
 
-const getSections = () => {
+const getEntities = () => {
 	const elements = document.querySelectorAll('.myToc0 li a');
 	return Array.from(elements).map(element => element.innerHTML);
 }
@@ -60,15 +60,11 @@ const getRecords = () => {
  *
  * E.g.,
  *
- *     last_mod_by: {
- *     'DB Field': 'last_mod_by',
- *     'Data Type': 'SREL',
- *     'SREL References': 'cnt.id',
- *     Flags: ' '
+ *   {
+ *     'name': 'last_mod_by', 
+ *     'type': 'SREL',
+ *     'link': 'cnt.id'
  *   }
- * }
- * ]
- *
  *
  */
 const tableDataToObject = (tableData) => {
@@ -82,7 +78,7 @@ const tableDataToObject = (tableData) => {
 			const key = tableHeaderToCode[hdr];
 			const value = values[idx];
 
-			if (nillables.includes(key) && value === ' ') {
+			if (nillables.includes(key) && /^\s+$/.test(value)) {
 				// exclude representations for empty values
 			} else {
 				info[key] = value;
@@ -105,17 +101,16 @@ const tableDataToObject = (tableData) => {
 	 const file = isRequest(category) ? 'request' : `${category}-objects`;
 	await page.goto(`${doc_base}/${file}.html`);
 
-	const sections = await page.evaluate(getSections);
+	const entities = await page.evaluate(getEntities);
 
 	const tableData = await page.evaluate(getRecords);
 
 	const parsedTables = tableData.map(tableDataToObject);
 
-	sections.forEach((section, index) => {
+	entities.forEach((section, index) => {
 		parsedTables.forEach((table, j) => {
-			const numEntries = Object.keys(schema).length;
-			const offset = j - numEntries;
-			const s = sections[index + offset] || 'unk';
+			const offset = j ;
+			const s = entities[offset] || 'unk';
 			const clean_s = s.replace(/ Object$/, '');
 			if (table) {
 				const attributes = table.filter(att => !(RELATION in att));
@@ -125,7 +120,7 @@ const tableDataToObject = (tableData) => {
 					links,
 				};
 			} else {
-				console.warn('no table at', index, offset, 'for', sections);
+				console.warn('no table at', index, offset, 'for', entities);
 			}
 		})
 	});
