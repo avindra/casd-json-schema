@@ -1,0 +1,10 @@
+{
+  "name": "ca-servicedesk-model",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Avindra Goolcharan <aavindraa@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer-core": "^2.0.0"
+  }
+}
