@@ -7,18 +7,24 @@ const isRequest = category => category === 'request';
 
 
 /**
+ * String representation to use to indicate
+ * a foreign key / relationship.
+ */
+const RELATION = 'LINK';
+
+/**
  * Convert UI-friendly names from the
  * <table> into a terser representation
  * for our schema object
  */
 const tableHeaderToCode = {
-'DB Field': 'table',
+'DB Field': 'field',
 'Data Type': 'type',
-'SREL References': 'link',
+'SREL References': RELATION,
 'Flags': 'flags',
 };
 
-const nillables = ['link', 'flags'];
+const nillables = [RELATION, 'flags'];
 
 const getSections = () => {
 	const elements = document.querySelectorAll('.myToc0 li a');
@@ -71,7 +77,7 @@ const tableDataToObject = (tableData) => {
 	return attributeLines.reduce((acc, line) => {
 		const cells = line.split('\t');
 		const [attributeName, ...values] = cells;
-		const info = {};
+		const info = {name: attributeName};
 		headers.forEach((hdr, idx) => {
 			const key = tableHeaderToCode[hdr];
 			const value = values[idx];
@@ -83,9 +89,10 @@ const tableDataToObject = (tableData) => {
 			}
 
 		});
-		acc[attributeName]  = info;
+
+		acc.push(info);
 		return acc;
-	}, {});
+	}, []);
 
 }
 
@@ -105,9 +112,21 @@ const tableDataToObject = (tableData) => {
 	const parsedTables = tableData.map(tableDataToObject);
 
 	sections.forEach((section, index) => {
-		parsedTables.forEach((table, offset) => {
-			const s = sections[index + offset];
-			schema[s] = table;
+		parsedTables.forEach((table, j) => {
+			const numEntries = Object.keys(schema).length;
+			const offset = j - numEntries;
+			const s = sections[index + offset] || 'unk';
+			const clean_s = s.replace(/ Object$/, '');
+			if (table) {
+				const attributes = table.filter(att => !(RELATION in att));
+				const links = table.filter(att => RELATION in att);
+				schema[clean_s] = {
+					attributes,
+					links,
+				};
+			} else {
+				console.warn('no table at', index, offset, 'for', sections);
+			}
 		})
 	});
 }
