@@ -7,7 +7,7 @@ const puppeteer = require('puppeteer-core');
 const byTitle = (title) => a => a.title === title;
 
 const onlyObjects = a => /-objects\.html$/.test(a.link);
-const toObjectNames = a => a.link.match(/([A-z]+)-objects\.html$/)[1];
+const toRepresentation = a => a.link.match(/([A-z]+)-objects\.html$/)[1];
 
 (async () => {
   const browser = await puppeteer.launch({executablePath: '/usr/bin/google-chrome'});
@@ -29,7 +29,7 @@ const toObjectNames = a => a.link.match(/([A-z]+)-objects\.html$/)[1];
 		  .find(byTitle('Objects and Attributes'))
 		  .children
 		  .filter(onlyObjects)
-		  .map(toObjectNames);
+		  .map(toRepresentation);
 
 	  console.log('objects are', items);
 	  // only need a single version of tocJSON

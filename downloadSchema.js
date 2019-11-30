@@ -2,13 +2,7 @@
 const http = require('http');
 const {createWriteStream, existsSync} = require('fs');
 
-const {categories} = require('./config');
-
-const VERSION = "14.1";
-
-const VERSION_TO_PASS = VERSION.replace(/\./g, '-');
-
-const doc_base = `http://techdocs.broadcom.com/content/broadcom/techdocs/us/en/ca-enterprise-software/business-management/ca-service-management/${VERSION_TO_PASS}/reference/ca-service-desk-manager-reference-commands/objects-and-attributes/`
+const {categories, doc_base} = require('./config');
 
 for (const root of categories) {
 	const targetFile = `./raw/${root}.html`;
@@ -20,5 +14,5 @@ for (const root of categories) {
 	const file = createWriteStream(targetFile);
 
 	const page = `${doc_base}/${root}-objects.html`;
-	const request = http.get(page, (response) => response.pipe(file));
+	http.get(page, (response) => response.pipe(file));
 };
