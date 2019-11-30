@@ -13,6 +13,10 @@ HTML is fairly easy to parse, so this project uses Puppeter to browse through th
  * all "objects," as defined by CA Web Services, including their appropriate attribute names
  * relationships between objects via foreign keys
 
+## I thought SOAP handles this for me?
+
+Perhaps a well implemented SOAP API can properly describe objects and their relationships. When it comes to the `doSelect` API, the "ease of use" afforded by the SOAP protocol goes into the Web Services black box.
+
 ## Installation
 
 TBD
