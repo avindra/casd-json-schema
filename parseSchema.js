@@ -39,11 +39,11 @@ const getSections = () => {
     'sym\tsym\tSTRING\t \tText value displayed to the user.'
   ],
  */
-const getCells = () => {
+const getRecords = () => {
 	const tables = document.querySelectorAll('.table-wrapper table');
 	return Array.from(tables).map(table => {
-		const cells = table.querySelectorAll('tr');
-		return Array.from(cells).map(el => el.innerText);
+		const rows = table.querySelectorAll('tr');
+		return Array.from(rows).map(el => el.innerText);
 	});
 }
 
@@ -100,7 +100,7 @@ const tableDataToObject = (tableData) => {
 
 	const sections = await page.evaluate(getSections);
 
-	const tableData = await page.evaluate(getCells);
+	const tableData = await page.evaluate(getRecords);
 
 	const parsedTables = tableData.map(tableDataToObject);
 
