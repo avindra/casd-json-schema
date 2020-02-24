@@ -1,9 +1,8 @@
 const {createDOM} = require("./env");
 const {normalize} = require('./util');
-const {categories} =require('./config');
 const {parse} =require("./parse");
 
-const createSchema = () => {
+const createSchema = (categories) => {
     const schema = {};
 
     for (const rawCategory of categories) {

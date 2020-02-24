@@ -1,4 +1,5 @@
-const {createSchema} = require('./createSchema');
+const {createSchema} = require('./src/schema');
+const {categories} =require('./config');
 
 
 /**
@@ -6,5 +7,5 @@ const {createSchema} = require('./createSchema');
  * 
  * $ node run.js > schema.json
  */
-const schema = createSchema();
+const schema = createSchema(categories);
 console.log(JSON.stringify(schema, null, 4));
