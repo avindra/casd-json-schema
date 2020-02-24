@@ -14,14 +14,13 @@ for (const rawCategory of categories) {
 		continue;
 	}
 
-	const file = createWriteStream(targetFile);
-
 	console.log(`Fetching page ${page}...`);
 	http.get(page, (response) => {
 		const {statusCode} = response;
 		if (statusCode >= 400 && statusCode <= 599) {
 			console.log(`Server returned failure ${statusCode}`);
 		} else {
+			const file = createWriteStream(targetFile);
 			response.pipe(file);
 		}
 	});

@@ -79,7 +79,7 @@ const tableDataToObject = (tableData) => {
 function parse(document) {
 	const tables = [...document.querySelectorAll("table")];
 	const entities = [...document.querySelectorAll("[data-outputclass='bc-h2']")].map(a => a.textContent.replace(/ Object$/, ''));
-	console.log(entities.length + " entities found");
+	console.error(entities.length + " entities found");
 
 	// the tab is an oddity preserved from 
 	// the initial parse implementation done with puppeteer / playwright
