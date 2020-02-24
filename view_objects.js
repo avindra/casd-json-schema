@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const {readFileSync}=require('fs');
 const {categories} =require('./config');
 
 const playwright = require('playwright');
