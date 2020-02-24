@@ -9,7 +9,7 @@ const {parse} =require("./parse");
  * 
  * $ node run.js > schema.json
  */
-let schema = {};
+const schema = {};
 
 for (const rawCategory of categories) {
     const category = normalize(rawCategory);
@@ -28,10 +28,10 @@ for (const rawCategory of categories) {
      * "Tax" the shape shufflers of v8, they
      * are quite sophisticated...
      */
-    schema = {
-        ...schema,
-        ...parse(document),
-    };
+    const [ents, defs] = parse(document);
+    ents.forEach((entity, i) => {
+        schema[entity] = defs[i];
+    });
 }
 
 console.log(JSON.stringify(schema, null, 4));

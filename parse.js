@@ -77,10 +77,8 @@ const tableDataToObject = (tableData) => {
 
 
 function parse(document) {
-	const partialSchema = {};
-
 	const tables = [...document.querySelectorAll("table")];
-	const entities = [...document.querySelectorAll("[data-outputclass='bc-h2']")].map(a => a.textContent);
+	const entities = [...document.querySelectorAll("[data-outputclass='bc-h2']")].map(a => a.textContent.replace(/ Object$/, ''));
 	console.log(entities.length + " entities found");
 
 	// the tab is an oddity preserved from 
@@ -90,24 +88,21 @@ function parse(document) {
 
 	const parsedTables = tableData.map(tableDataToObject);
 
-	entities.forEach((_entity, i) => {
-		const entity = _entity.replace(/ Object$/, '');
+
+	const entityDefinitions = new Array(entities.length);
+
+	entities.forEach((entity, i) => {
 		console.error("building", entity);
-		parsedTables.forEach((table, j) => {
-			if (table) {
-				const attributes = table.filter(att => !(RELATION in att));
-				const links = table.filter(att => RELATION in att);
-				partialSchema[entity] = {
-					attributes,
-					links,
-				};
-			} else {
-				console.warn('no table at', i, j, 'for', entities);
-			}
+
+		parsedTables.forEach((table) => {
+			const attributes = table.filter(att => !(RELATION in att));
+			const links = table.filter(att => RELATION in att);
+
+			entityDefinitions[i] = { attributes, links };
 		})
 	});
 
-	return partialSchema;
+	return [entities, entityDefinitions];
 }
 
 module.exports = {
