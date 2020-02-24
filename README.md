@@ -34,6 +34,3 @@ It is possible to add more categories, which would increase coverage of the API 
 
 The most immediate problem one would encounter, is supporting irregular URL patterns to cover other categories.
 
-## Code issues
-
-The reliance on `playwright` is too heavy. Should remove dependency on it eventually. It is helping in setting up a quick scrape/parse though.

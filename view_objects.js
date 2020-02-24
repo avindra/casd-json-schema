@@ -8,6 +8,13 @@ const byTitle = (title) => a => a.title === title;
 const onlyObjects = a => /-objects\.html$/.test(a.link);
 const toRepresentation = a => a.link.match(/([A-z]+)-objects\.html$/)[1];
 
+/**
+ * This is a script that was built to try to grab all
+ * possible categories in the navigation.
+ * 
+ * It is broken but structurally has sound ideas for
+ * getting that list programatically.
+ */
 (async () => {
   const browser = await playwright['firefox'].launch({
 	  executablePath: '/usr/bin/firefox',

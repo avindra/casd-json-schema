@@ -3,16 +3,26 @@ const http = require('http');
 const {createWriteStream, existsSync} = require('fs');
 
 const {categories, doc_base} = require('./config');
+const {normalize} = require('./util');
 
-for (const root of categories) {
-	const targetFile = `./raw/${root}.html`;
+for (const rawCategory of categories) {
+	const category = normalize(rawCategory);
+	const targetFile = `./raw/${category}.html`;
+	const page = `${doc_base}/${category}.html`;
 	if (existsSync(targetFile)) {
-		console.log(`Skipping download of ${root} since it's already cached.`);
+		console.log(`skipped download cached entity [${category}] ${page}`);
 		continue;
 	}
 
 	const file = createWriteStream(targetFile);
 
-	const page = `${doc_base}/${root}-objects.html`;
-	http.get(page, (response) => response.pipe(file));
+	console.log(`Fetching page ${page}...`);
+	http.get(page, (response) => {
+		const {statusCode} = response;
+		if (statusCode >= 400 && statusCode <= 599) {
+			console.log(`Server returned failure ${statusCode}`);
+		} else {
+			response.pipe(file);
+		}
+	});
 };

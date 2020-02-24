@@ -1,10 +1,8 @@
 #!/usr/bin/env node
-const {categories,doc_base} =require('./config');
+const {categories} =require('./config');
 
-const playwright = require('playwright');
-
-const isRequest = category => category === 'request';
-
+const {create$} = require("./env");
+const {normalize} = require('./util');
 
 /**
  * String representation to use to indicate
@@ -26,13 +24,9 @@ const tableHeaderToCode = {
 
 const nillables = [RELATION, 'flags'];
 
-const getEntities = () => {
-	const elements = document.querySelectorAll('.myToc0 li a');
-	return Array.from(elements).map(element => element.innerHTML);
-}
 
 /**
- * This returns table data in the form of:
+ * Table row data is in the form of:
  *  [
     'Attribute\tDB Field\tData Type\tSREL References\tFlags',
     'code\tcode\tSTRING\t \t ',
@@ -45,13 +39,6 @@ const getEntities = () => {
     'sym\tsym\tSTRING\t \tText value displayed to the user.'
   ],
  */
-const getRecords = () => {
-	const tables = document.querySelectorAll('.table-wrapper table');
-	return Array.from(tables).map(table => {
-		const rows = table.querySelectorAll('tr');
-		return Array.from(rows).map(el => el.innerText);
-	});
-}
 
 
 /**
@@ -92,26 +79,30 @@ const tableDataToObject = (tableData) => {
 
 }
 
-(async () => {
-  const browser = await playwright['firefox'].launch({executablePath: '/usr/bin/firefox'});
-  const page = await browser.newPage();
 
-  let schema = {};
-  for (const category of categories) {
-	 const file = isRequest(category) ? 'request' : `${category}-objects`;
-	await page.goto(`${doc_base}/${file}.html`);
+let schema = {};
+for (const rawCategory of categories) {
+	const category = normalize(rawCategory);
+	console.error(`Parsing ${category}...`);
 
-	const entities = await page.evaluate(getEntities);
+	const dom = create$(category);
+	const document = dom.window.document;
 
-	const tableData = await page.evaluate(getRecords);
+	const tables = [...document.querySelectorAll("table")];
+	const entities = [...document.querySelectorAll("[data-outputclass='bc-h2']")].map(a => a.textContent);
+	console.log(entities.length + " entities found");
+
+	// the tab is an oddity preserved from 
+	// the initial parse implementation done with puppeteer / playwright
+	const tablesByRow = tables.map(t => [...t.querySelectorAll("tr")]);
+	const tableData = tablesByRow.map(rowList => rowList.map(row => [...row.querySelectorAll("td")].map(cell => cell.textContent).join("\t")));
 
 	const parsedTables = tableData.map(tableDataToObject);
 
-	entities.forEach((section, index) => {
+	entities.forEach((section, i) => {
+			console.error("building", section);
 		parsedTables.forEach((table, j) => {
-			const offset = j ;
-			const s = entities[offset] || 'unk';
-			const clean_s = s.replace(/ Object$/, '');
+			const clean_s = section.replace(/ Object$/, '');
 			if (table) {
 				const attributes = table.filter(att => !(RELATION in att));
 				const links = table.filter(att => RELATION in att);
@@ -120,14 +111,11 @@ const tableDataToObject = (tableData) => {
 					links,
 				};
 			} else {
-				console.warn('no table at', index, offset, 'for', entities);
+				console.warn('no table at', i, j, 'for', entities);
 			}
 		})
 	});
 }
 
-  console.log(JSON.stringify(schema, null, 2));
-
-  await browser.close();
-})();
+console.log(JSON.stringify(schema, null, 2));
 

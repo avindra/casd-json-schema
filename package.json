@@ -5,6 +5,6 @@
   "author": "Avindra Goolcharan <aavindraa@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "playwright": "^0.11.1"
+    "jsdom": "^16.2.0"
   }
 }
