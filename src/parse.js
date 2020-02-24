@@ -81,8 +81,6 @@ function parse(document) {
 	const entities = [...document.querySelectorAll("[data-outputclass='bc-h2']")].map(a => a.textContent.replace(/ Object$/, ''));
 	console.error(entities.length + " entities found");
 
-	// the tab is an oddity preserved from 
-	// the initial parse implementation done with puppeteer / playwright
 	const tablesByRow = tables.map(t => [...t.querySelectorAll("tr")]);
 	const tableData = tablesByRow.map(rowList => rowList.map(row => [...row.querySelectorAll("td")].map(cell => cell.textContent)));
 
