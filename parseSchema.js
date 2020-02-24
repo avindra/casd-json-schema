@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const {categories,doc_base} =require('./config');
 
-const puppeteer = require('puppeteer-core');
+const playwright = require('playwright');
 
 const isRequest = category => category === 'request';
 
@@ -93,7 +93,7 @@ const tableDataToObject = (tableData) => {
 }
 
 (async () => {
-  const browser = await puppeteer.launch({executablePath: '/usr/bin/google-chrome'});
+  const browser = await playwright['firefox'].launch({executablePath: '/usr/bin/firefox'});
   const page = await browser.newPage();
 
   let schema = {};

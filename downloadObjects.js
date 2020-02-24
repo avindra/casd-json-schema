@@ -2,7 +2,7 @@
 const {readFileSync}=require('fs');
 const {categories} =require('./config');
 
-const puppeteer = require('puppeteer-core');
+const playwright = require('playwright');
 
 const byTitle = (title) => a => a.title === title;
 
@@ -10,7 +10,9 @@ const onlyObjects = a => /-objects\.html$/.test(a.link);
 const toRepresentation = a => a.link.match(/([A-z]+)-objects\.html$/)[1];
 
 (async () => {
-  const browser = await puppeteer.launch({executablePath: '/usr/bin/google-chrome'});
+  const browser = await playwright['firefox'].launch({
+	  executablePath: '/usr/bin/firefox',
+  });
   const page = await browser.newPage();
 
   for (const category of categories) {
