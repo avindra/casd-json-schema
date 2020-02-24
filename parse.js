@@ -52,9 +52,9 @@ const nillables = [RELATION, 'flags'];
  */
 const tableDataToObject = (tableData) => {
 	const [headerInfo, ...attributeLines] = tableData;
-	const [_, ...headers] = headerInfo.split('\t');
+	const [_, ...headers] = headerInfo;
 	return attributeLines.reduce((acc, line) => {
-		const cells = line.split('\t');
+		const cells = line;
 		const [attributeName, ...values] = cells;
 		const info = {name: attributeName};
 		headers.forEach((hdr, idx) => {
@@ -84,7 +84,7 @@ function parse(document) {
 	// the tab is an oddity preserved from 
 	// the initial parse implementation done with puppeteer / playwright
 	const tablesByRow = tables.map(t => [...t.querySelectorAll("tr")]);
-	const tableData = tablesByRow.map(rowList => rowList.map(row => [...row.querySelectorAll("td")].map(cell => cell.textContent).join("\t")));
+	const tableData = tablesByRow.map(rowList => rowList.map(row => [...row.querySelectorAll("td")].map(cell => cell.textContent)));
 
 	const parsedTables = tableData.map(tableDataToObject);
 
