@@ -1,8 +1,4 @@
 #!/usr/bin/env node
-const {categories} =require('./config');
-
-const {create$} = require("./env");
-const {normalize} = require('./util');
 
 /**
  * String representation to use to indicate
@@ -80,13 +76,8 @@ const tableDataToObject = (tableData) => {
 }
 
 
-let schema = {};
-for (const rawCategory of categories) {
-	const category = normalize(rawCategory);
-	console.error(`Parsing ${category}...`);
-
-	const dom = create$(category);
-	const document = dom.window.document;
+function parse(document) {
+	const partialSchema = {};
 
 	const tables = [...document.querySelectorAll("table")];
 	const entities = [...document.querySelectorAll("[data-outputclass='bc-h2']")].map(a => a.textContent);
@@ -99,14 +90,14 @@ for (const rawCategory of categories) {
 
 	const parsedTables = tableData.map(tableDataToObject);
 
-	entities.forEach((section, i) => {
-			console.error("building", section);
+	entities.forEach((_entity, i) => {
+		const entity = _entity.replace(/ Object$/, '');
+		console.error("building", entity);
 		parsedTables.forEach((table, j) => {
-			const clean_s = section.replace(/ Object$/, '');
 			if (table) {
 				const attributes = table.filter(att => !(RELATION in att));
 				const links = table.filter(att => RELATION in att);
-				schema[clean_s] = {
+				partialSchema[entity] = {
 					attributes,
 					links,
 				};
@@ -115,7 +106,10 @@ for (const rawCategory of categories) {
 			}
 		})
 	});
+
+	return partialSchema;
 }
 
-console.log(JSON.stringify(schema, null, 2));
-
+module.exports = {
+	parse,
+}

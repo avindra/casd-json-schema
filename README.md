@@ -17,7 +17,7 @@ Hence, this project exists and can be used create visualizations or progamatical
 1. yarn or npm install the dependencies
 2. view `config.js`              # Categories are limited to a default set. 
 3. `node save_data.js`           # Download pages containing raw HTML (seed files)
-4. `node parse.js`               # Generate structured representation (JSON artifact)
+4. `node run.js`                 # Generate structured representation (JSON artifact) from the seed files
 
 ## Constraints
 

@@ -7,12 +7,12 @@ const {JSDOM} = require("jsdom");
  * JSDOM chosen due to availability of standard apis
  * in a browser-free environment.
  */
-const create$ = (category) => {
+const createDOM = (category) => {
     const fData = readFileSync("./raw/" + category + ".html")
     const dom = new JSDOM(fData);
     return dom;
 }
 
 module.exports = {
-    create$,
+    createDOM,
 }
