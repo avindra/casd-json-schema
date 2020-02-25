@@ -5,8 +5,8 @@ const {parse} =require("./parse");
 const createSchema = (categories) => {
     const schema = {};
 
-    for (const rawCategory of categories) {
-        const category = normalize(rawCategory);
+    for (const _category of categories) {
+        const category = normalize(_category);
         console.error(`Parsing ${category}...`);
 
         /**

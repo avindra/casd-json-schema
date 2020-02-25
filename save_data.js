@@ -5,8 +5,8 @@ const {createWriteStream, existsSync} = require('fs');
 const {categories, doc_base} = require('./config');
 const {normalize} = require('./util');
 
-for (const rawCategory of categories) {
-	const category = normalize(rawCategory);
+for (const _category of categories) {
+	const category = normalize(_category);
 	const targetFile = `./raw/${category}.html`;
 	const page = `${doc_base}/${category}.html`;
 	if (existsSync(targetFile)) {
