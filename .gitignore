@@ -1,4 +1,4 @@
-raw/
+*.html
 node_modules
 
 *.pdf

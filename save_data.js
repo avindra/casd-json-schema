@@ -3,14 +3,15 @@ const http = require('http');
 const {createWriteStream, existsSync} = require('fs');
 
 const {categories, doc_base} = require('./config');
-const {normalize} = require('./util');
+const {normalize} = require('./src/util');
 
 for (const _category of categories) {
 	const category = normalize(_category);
-	const targetFile = `./raw/${category}.html`;
-	const page = `${doc_base}/${category}.html`;
+	const fileName = `${category}.html`;
+	const targetFile = `./${fileName}`;
+	const page = `${doc_base}/${fileName}`;
 	if (existsSync(targetFile)) {
-		console.log(`skipped download cached entity [${category}] ${page}`);
+		console.log(` [${category}]: page in cache ${fileName} (skipped)`);
 		continue;
 	}
 

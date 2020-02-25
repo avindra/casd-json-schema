@@ -8,7 +8,7 @@ const {JSDOM} = require("jsdom");
  * in a browser-free environment.
  */
 const createDOM = (category) => {
-    const fData = readFileSync("./raw/" + category + ".html")
+    const fData = readFileSync("./" + category + ".html")
     const dom = new JSDOM(fData);
     return dom;
 }
