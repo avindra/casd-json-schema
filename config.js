@@ -8,8 +8,11 @@ const doc_base = `http://techdocs.broadcom.com/content/broadcom/techdocs/us/en/c
 module.exports = {
 	categories: [
 		'request',
-		'workflow',
-		'change-request',
+    'relational-information',
+    'problem-category',
+    'workflow',
+    'task',
+    'change-request',
 	],
 	doc_base,
 };
