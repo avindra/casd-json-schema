@@ -6,11 +6,21 @@ This can be used to facilitate rapid discovery of the API surface.
 
 It converts the HTML documentation of tables spread across 50 different pages with an unhelpful navigation system, into a single JSON artifact.
 
+## Requirements
+
+This has been developed and tested using node.js. There is one dependency, `jsdom`, which is used for scraping data from HTML pages using standard web apis.
+
+## Usage
+
+A `Makefile` is included for convenience.
+
+Just run `make` to get the `schema.json` file.
+
 ## I thought SOAP handles this for me?
 
 A well implemented SOAP API _should_ describe objects and their relationships. When it comes to the `doSelect` API, the "ease of use" intended by the SOAP protocol goes into a Web Services black box. The API rot can become worse if your organization filters API access through a gateway.
 
-Hence, this project exists and can be used create visualizations or progamatically create APIs using the JSON schema artifact.
+Hence, this project exists and can be used create visualizations or programatically create APIs using the JSON schema artifact.
 
 ## Development
 
