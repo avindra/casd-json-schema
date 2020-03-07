@@ -1,4 +1,6 @@
 *.html
 node_modules
 
+schema.json
+
 *.pdf

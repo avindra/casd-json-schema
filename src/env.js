@@ -7,9 +7,10 @@ const {JSDOM} = require("jsdom");
  * JSDOM chosen due to availability of standard apis
  * in a browser-free environment.
  */
-const createDOM = (category) => {
+const createDOM = (category, scripts = false) => {
     const fData = readFileSync("./" + category + ".html")
-    const dom = new JSDOM(fData);
+    const options = scripts ? { runScripts: "dangerously" } : undefined;
+    const dom = new JSDOM(fData, options);
     return dom;
 }
 
