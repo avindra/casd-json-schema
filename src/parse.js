@@ -4,7 +4,7 @@
  * String representation to use to indicate
  * a foreign key / relationship.
  */
-const RELATION = 'LINK';
+const RELATION = "LINK";
 
 /**
  * Convert UI-friendly names from the
@@ -12,14 +12,13 @@ const RELATION = 'LINK';
  * for our schema object
  */
 const tableHeaderToCode = {
-'DB Field': 'field',
-'Data Type': 'type',
-'SREL References': RELATION,
-'Flags': 'flags',
+	"DB Field": "field",
+	"Data Type": "type",
+	"SREL References": RELATION,
+	Flags: "flags",
 };
 
-const nillables = [RELATION, 'flags'];
-
+const nillables = [RELATION, "flags"];
 
 /**
  * Table row data is in the form of:
@@ -36,7 +35,6 @@ const nillables = [RELATION, 'flags'];
   ],
  */
 
-
 /**
  * parses pure cell representation into structured form:
  *
@@ -44,7 +42,7 @@ const nillables = [RELATION, 'flags'];
  * E.g.,
  *
  *   {
- *     'name': 'last_mod_by', 
+ *     'name': 'last_mod_by',
  *     'type': 'SREL',
  *     'link': 'cnt.id'
  *   }
@@ -56,7 +54,7 @@ const tableDataToObject = (tableData) => {
 	return attributeLines.reduce((acc, line) => {
 		const cells = line;
 		const [attributeName, ...values] = cells;
-		const info = {name: attributeName};
+		const info = { name: attributeName };
 		headers.forEach((hdr, idx) => {
 			const key = tableHeaderToCode[hdr];
 			const value = values[idx];
@@ -66,26 +64,28 @@ const tableDataToObject = (tableData) => {
 			} else {
 				info[key] = value;
 			}
-
 		});
 
 		acc.push(info);
 		return acc;
 	}, []);
-
-}
-
+};
 
 function parse(document) {
 	const tables = [...document.querySelectorAll("table")];
-	const entities = [...document.querySelectorAll("[data-outputclass='bc-h2']")].map(a => a.textContent.replace(/ Object$/, ''));
+	const entities = [
+		...document.querySelectorAll("[data-outputclass='bc-h2']"),
+	].map((a) => a.textContent.replace(/ Object$/, ""));
 	console.error(entities.length + " entities found");
 
-	const tablesByRow = tables.map(t => [...t.querySelectorAll("tr")]);
-	const tableData = tablesByRow.map(rowList => rowList.map(row => [...row.querySelectorAll("td")].map(cell => cell.textContent)));
+	const tablesByRow = tables.map((t) => [...t.querySelectorAll("tr")]);
+	const tableData = tablesByRow.map((rowList) =>
+		rowList.map((row) =>
+			[...row.querySelectorAll("td")].map((cell) => cell.textContent),
+		),
+	);
 
 	const parsedTables = tableData.map(tableDataToObject);
-
 
 	const entityDefinitions = new Array(entities.length);
 
@@ -93,11 +93,11 @@ function parse(document) {
 		console.error("building", entity);
 
 		parsedTables.forEach((table) => {
-			const attributes = table.filter(att => !(RELATION in att));
-			const links = table.filter(att => RELATION in att);
+			const attributes = table.filter((att) => !(RELATION in att));
+			const links = table.filter((att) => RELATION in att);
 
 			entityDefinitions[i] = { attributes, links };
-		})
+		});
 	});
 
 	return [entities, entityDefinitions];
@@ -105,4 +105,4 @@ function parse(document) {
 
 module.exports = {
 	parse,
-}
+};

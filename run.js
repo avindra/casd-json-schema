@@ -1,10 +1,9 @@
-const {createSchema} = require('./src/schema');
-const {categories} =require('./config');
-
+const { createSchema } = require("./src/schema");
+const { categories } = require("./config");
 
 /**
  * Runs the program (parse to JSON schema).
- * 
+ *
  * $ node run.js > schema.json
  */
 const schema = createSchema(categories);

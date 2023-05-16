@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const http = require('http');
-const {createWriteStream, existsSync} = require('fs');
+const http = require("http");
+const { createWriteStream, existsSync } = require("fs");
 
-const {categories, doc_base} = require('./config');
-const {normalize} = require('./src/util');
+const { categories, doc_base } = require("./config");
+const { normalize } = require("./src/util");
 
 for (const _category of categories) {
 	const category = normalize(_category);
@@ -17,7 +17,7 @@ for (const _category of categories) {
 
 	console.log(`Fetching page ${page}...`);
 	http.get(page, (response) => {
-		const {statusCode} = response;
+		const { statusCode } = response;
 		if (statusCode >= 400 && statusCode <= 599) {
 			console.log(`Server returned failure ${statusCode}`);
 		} else {
@@ -25,4 +25,4 @@ for (const _category of categories) {
 			response.pipe(file);
 		}
 	});
-};
+}
