@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const http = require("http");
 const { createWriteStream, existsSync } = require("fs");
 
 const { categories, doc_base } = require("./config");
@@ -16,13 +15,11 @@ for (const _category of categories) {
 	}
 
 	console.log(`Fetching page ${page}...`);
-	http.get(page, (response) => {
-		const { statusCode } = response;
-		if (statusCode >= 400 && statusCode <= 599) {
-			console.log(`Server returned failure ${statusCode}`);
-		} else {
-			const file = createWriteStream(targetFile);
-			response.pipe(file);
-		}
-	});
+
+	(async function () {
+		const response = await fetch(page);
+		const file = createWriteStream(targetFile);
+		const txt = await response.text();
+		file.write(txt);
+	})();
 }
